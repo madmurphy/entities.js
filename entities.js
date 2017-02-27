@@ -34,7 +34,7 @@ var Entities = {
 	"parseString": function (sInput) {
 
 		var
-			nChr, bSmcln, nOffsetA = 0, nOffsetB = 0, nBrackets = 0, nLen = sInput.length, sOutput = "";
+			nChr, nOffsetA = 0, nOffsetB = 0, nBrackets = 0, nLen = sInput.length, sOutput = "";
 
 		/*
 
@@ -109,23 +109,27 @@ var Entities = {
 
 			} else if ((nMsk & 16) && nBrackets === 0) {
 
-				bSmcln = nIdx + 1 < nLen && sInput.charAt(nIdx + 1) === ";";
-				sOutput += sInput.substring(nOffsetA, nOffsetB - 1)
+				if (nIdx + 1 < nLen && sInput.charAt(nIdx + 1) === ";") {
 
-				try {
+					sOutput += sInput.substring(nOffsetA, nOffsetB - 1)
 
-					sOutput += window.eval(sInput.substring(nOffsetB + 1, nIdx));
+					try {
 
-				} catch (oErr) {
+						sOutput += window.eval(sInput.substring(nOffsetB + 1, nIdx));
 
-					console.log("Entities, parsing error - " + oErr.message + " [skip]");
-					sOutput += sInput.substring(nOffsetB - 1, bSmcln ? nIdx + 2 : nIdx + 1);
+					} catch (oErr) {
+
+						console.log("Entities, parsing error - " + oErr.message + " [skip]");
+						sOutput += sInput.substring(nOffsetB - 1, nIdx + 2);
+
+					}
+
+					nOffsetA = nIdx + 2;
 
 				}
 
-				bSmcln && nIdx++;
-				nOffsetA = nIdx + 1;
-				nMsk |= 1;
+				nIdx++;
+				nMsk = 1;
 
 			}
 
@@ -150,22 +154,22 @@ var Entities = {
 	**/
 	"parseTree": function (oParent) {
 
-		var oIter;
-
-		if (oParent.hasChildNodes()) {
-
-			for (oIter = oParent.firstChild; oIter; this.parseTree(oIter), oIter = oIter.nextSibling);
-
-		}
+		var nIdx, oIter;
 
 		if (oParent.hasAttributes && oParent.hasAttributes()) {
 
-			for (var nIdx = 0; nIdx < oParent.attributes.length; nIdx++) {
+			for (nIdx = 0; nIdx < oParent.attributes.length; nIdx++) {
 
 				oIter = oParent.attributes[nIdx];
 				oIter.value = this.parseString(oIter.value);
 
 			}
+
+		}
+
+		if (oParent.hasChildNodes()) {
+
+			for (oIter = oParent.firstChild; oIter; this.parseTree(oIter), oIter = oIter.nextSibling);
 
 		}
 
