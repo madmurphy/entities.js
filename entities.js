@@ -128,7 +128,6 @@ var Entities = {
 
 				}
 
-				nIdx++;
 				nMsk = 1;
 
 			}
