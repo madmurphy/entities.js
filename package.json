@@ -1,0 +1,19 @@
+{
+	"name": "entities.js",
+	"version": "1.0.0",
+	"description": "Born Again Netscape's JavaScript Entities",
+	"main": "entities.js",
+	"scripts": {
+		"test": "echo \"Error: no test specified\" && exit 1"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/madmurphy/entities.js.git"
+	},
+	"author": "madmurphy",
+	"license": "GPL-3.0",
+	"bugs": {
+		"url": "https://github.com/madmurphy/entities.js/issues"
+	},
+	"homepage": "https://madmurphy.github.io/entities.js/"
+}

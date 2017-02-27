@@ -1,0 +1,28 @@
+<!doctype html>
+<html>
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<title>Born Again Netscape's JavaScript Entities &ndash; Example</title>
+<script type="text/javascript" src="entities.js"></script>
+<script type="text/javascript">
+addEventListener("load", function () {
+
+	Entities.parseTree(document.documentElement || document.getElementsByTagName("html")[0]);
+
+}, false);
+</script>
+<style type="text/css">
+[data-joe-said]::before {
+	content: attr(data-joe-said);
+	display: block;
+	margin-bottom: 1em;
+}
+</style>
+</head>
+
+<body>
+
+<p title="&{new Date();};" style="color: &{(new Date()).getHours() & 1 ? 'red' : 'blue';};" data-joe-said="(Joe said &{'\'What a wonderful day!\''.replace(/'([^']*)'/g, '“$1”');};)">Hi there!</p>
+
+</body>
+</html>
