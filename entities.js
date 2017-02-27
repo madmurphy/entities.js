@@ -125,6 +125,7 @@ var Entities = {
 					}
 
 					nOffsetA = nIdx + 2;
+					nIdx++;
 
 				}
 
