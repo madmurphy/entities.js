@@ -9,4 +9,4 @@ Changes:
 
 ## [1.0.0] - 2017-02-27
 
-Entities 1.0.0 is released!
+JSEntities 1.0.0 is released!
