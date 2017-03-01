@@ -1,6 +1,6 @@
 {
 	"name": "entities.js",
-	"version": "1.0.0",
+	"version": "1.0.1",
 	"description": "Born Again Netscape's JavaScript Entities",
 	"main": "entities.js",
 	"scripts": {

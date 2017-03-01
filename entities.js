@@ -4,29 +4,31 @@
 |*|
 |*|	Born again Netscape's JavaScript Entities
 |*|
-|*|	https://github.com/madmurphy/entities.js/
+|*|	Version 1.0.1
 |*|
-|*|	This framework is released under the GNU Public License, version 3 or later.
-|*|	http://www.gnu.org/licenses/gpl-3.0-standalone.html
+|*|	https://github.com/madmurphy/entities.js/
 |*|
 |*|	Syntax:
 |*|
-|*|		* JS: `Entities.parseTree(document.documentElement)`
-|*|		* `console.log(Entities.parseString("Today is &{new Date();};"));`
+|*|		* JS: `JSEntities.parseTree(document.documentElement)`
+|*|		* `console.log(JSEntities.parseString("Today is &{new Date();};"));`
 |*|
 |*|	HTML Example:
 |*|
 |*|		* `<p title="&{new Date();};" style="color: &{(new Date()).getHours() & 1 ? 'red' : 'blue';};">Hello world!</p>`
 |*|
+|*|	This framework is released under the GNU Public License, version 3 or later.
+|*|	http://www.gnu.org/licenses/gpl-3.0-standalone.html
+|*|
 \*/
 
 "use strict";
 
-var Entities = {
+var JSEntities = {
 
 	/**
 
-		@brief			Parses and evaluates all the entities nested in a string
+		@brief			Parses and evaluates all the JavaScript entities nested in a string
 		@param			sInput		The string to parse and evaluate
 		@return			The evaluated string
 
@@ -119,7 +121,7 @@ var Entities = {
 
 					} catch (oErr) {
 
-						console.log("Entities, parsing error - " + oErr.message + " [skip]");
+						console.log("JSEntities, parsing error - " + oErr.message + " [skip]");
 						sOutput += sInput.substring(nOffsetB - 1, nIdx + 2);
 
 					}
