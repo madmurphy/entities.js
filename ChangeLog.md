@@ -1,5 +1,12 @@
 # Change Log
 
+## [1.0.2] - 2017-03-04
+
+Changes:
+
+* Code review
+* Documentation
+
 ## [1.0.1] - 2017-03-01
 
 Changes:

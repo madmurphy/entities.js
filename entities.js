@@ -2,9 +2,9 @@
 |*|
 |*|	:: entities.js ::
 |*|
-|*|	Born again Netscape's JavaScript Entities
+|*|	Born Again Netscape's JavaScript Entities
 |*|
-|*|	Version 1.0.1
+|*|	Version 1.0.2
 |*|
 |*|	https://github.com/madmurphy/entities.js/
 |*|
@@ -36,17 +36,17 @@ var JSEntities = {
 	"parseString": function (sInput) {
 
 		var
-			nChr, nOffsetA = 0, nOffsetB = 0, nBrackets = 0, nLen = sInput.length, sOutput = "";
+			nChr, nOffsetA = 0, nOffsetB = 0, nCBrackets = 0, nLen = sInput.length, sOutput = "";
 
 		/*
 
 		Mask `nMsk` (12 bits used):
 
-			FLAG_1		We are outside of the JS code
+			FLAG_1		We are outside of the JavaScript entity
 			FLAG_2		We are in an odd sequence of backslashes
-			FLAG_4		Unescaped ampersand found outside of the JS code
-			FLAG_8		Left curly bracket out of quote found inside the JS code
-			FLAG_16		Right curly bracket out of quote found inside the JS code
+			FLAG_4		Unescaped ampersand found outside of the JavaScript entity
+			FLAG_8		Left curly bracket out of quote found inside the JavaScript entity
+			FLAG_16		Right curly bracket out of quote found inside the JavaScript entity
 			FLAG_32		This is a leading slash
 			FLAG_64		We are inside a single-quoted string expression
 			FLAG_128	We are inside a double-quoted string expression
@@ -57,16 +57,16 @@ var JSEntities = {
 
 		*/
 
-		for (var nIdx = 0, nMsk = 1; nIdx < nLen; nIdx++) {
+		for (var nMsk = 1, nIdx = 0; nIdx < nLen; nIdx++) {
 
 			nChr = sInput.charCodeAt(nIdx);
 
 			nMsk	=	nChr === 38 && !((nMsk ^ 1) & 1987) ?				/* `&` */
 						(nMsk & 4039) | 4
-					: nChr === 123 && !(nMsk & 1986) && ((nMsk ^ 1) & 5) ?		/* `{` */
-						(nBrackets++, (nMsk & 4035) | (nMsk << 1 & 8))
+					: nChr === 123 && ((nMsk ^ 1) & 5) && !(nMsk & 1986) ?		/* `{` */
+						(nMsk & 4035) | 8
 					: nChr === 125 && !(nMsk & 1987) ?				/* `}` */
-						(nBrackets--, (nMsk & 4051) | 16)
+						(nMsk & 4051) | 16
 					: nChr === 39 && !(nMsk & 1955) ?				/* `'` */
 						(nMsk & 4035) ^ 64
 					: nChr === 34 && !(nMsk & 1891) ?				/* `"` */
@@ -106,14 +106,22 @@ var JSEntities = {
 
 			if (nMsk & 8) {
 
-				nOffsetB = nIdx;
-				nMsk &= 4094;
+				if (nMsk & 1) {
 
-			} else if ((nMsk & 16) && nBrackets === 0) {
+					nOffsetB = nIdx;
+					nMsk &= 4094;
+
+				}
+
+				nCBrackets++;
+
+			} else if ((nMsk & 16) && --nCBrackets === 0) {
+
+				/* nOffsetC = nIdx; */
 
 				if (nIdx + 1 < nLen && sInput.charAt(nIdx + 1) === ";") {
 
-					sOutput += sInput.substring(nOffsetA, nOffsetB - 1)
+					sOutput += sInput.substring(nOffsetA, nOffsetB - 1);
 
 					try {
 
