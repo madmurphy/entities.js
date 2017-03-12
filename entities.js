@@ -4,13 +4,13 @@
 |*|
 |*|	Born Again Netscape's JavaScript Entities
 |*|
-|*|	Version 1.0.2
+|*|	Version 1.0.3
 |*|
 |*|	https://github.com/madmurphy/entities.js/
 |*|
-|*|	Syntax:
+|*|	JS Syntax:
 |*|
-|*|		* JS: `JSEntities.parseTree(document.documentElement)`
+|*|		* `JSEntities.parseTree(document.documentElement)`
 |*|		* `console.log(JSEntities.parseString("Today is &{new Date();};"));`
 |*|
 |*|	HTML Example:
@@ -42,11 +42,11 @@ var JSEntities = {
 
 		Mask `nMsk` (12 bits used):
 
-			FLAG_1		We are outside of the JavaScript entity
+			FLAG_1		We are outside of any JavaScript entity
 			FLAG_2		We are in an odd sequence of backslashes
-			FLAG_4		Unescaped ampersand found outside of the JavaScript entity
-			FLAG_8		Left curly bracket out of quote found inside the JavaScript entity
-			FLAG_16		Right curly bracket out of quote found inside the JavaScript entity
+			FLAG_4		Unescaped ampersand found outside of any JavaScript entity
+			FLAG_8		Left curly bracket out of quote found inside a JavaScript entity
+			FLAG_16		Right curly bracket out of quote found inside a JavaScript entity
 			FLAG_32		This is a leading slash
 			FLAG_64		We are inside a single-quoted string expression
 			FLAG_128	We are inside a double-quoted string expression
@@ -96,7 +96,7 @@ var JSEntities = {
 								nMsk & 1985
 						)
 					: (nChr === 10 || nChr === 13) && (nMsk & 512) ?		/* `\n` or `\r` */
-						(nMsk & 193)
+						nMsk & 193
 					: nMsk & 32 ?
 						(nMsk & 3265) | 3072
 					: nMsk & 1024 ?
@@ -119,7 +119,7 @@ var JSEntities = {
 
 				/* nOffsetC = nIdx; */
 
-				if (nIdx + 1 < nLen && sInput.charAt(nIdx + 1) === ";") {
+				if (nIdx + 1 < nLen && sInput.charCodeAt(nIdx + 1) === 59 /* `;` */) {
 
 					sOutput += sInput.substring(nOffsetA, nOffsetB - 1);
 
