@@ -4,7 +4,7 @@
 |*|
 |*|	Born Again Netscape's JavaScript Entities
 |*|
-|*|	Version 1.0.3
+|*|	Version 1.0.4
 |*|
 |*|	https://github.com/madmurphy/entities.js/
 |*|
@@ -36,7 +36,7 @@ var JSEntities = {
 	"parseString": function (sInput) {
 
 		var
-			nChr, nOffsetA = 0, nOffsetB = 0, nCBrackets = 0, nLen = sInput.length, sOutput = "";
+			nChr, nOffsetA = 0, nOffsetB = 0, nCurlies = 0, nLen = sInput.length, sOutput = "";
 
 		/*
 
@@ -71,6 +71,10 @@ var JSEntities = {
 						(nMsk & 4035) ^ 64
 					: nChr === 34 && !(nMsk & 1891) ?				/* `"` */
 						(nMsk & 4035) ^ 128
+					: (nChr === 10 || nChr === 13) && (nMsk & 512) ?		/* `\n` or `\r` */
+						nMsk & 193
+					: nChr === 92 ?							/* `\` */
+						(nMsk & 4035) ^ 2
 					: nChr === 47 && !(nMsk & 193) ?				/* `/` */
 						(
 							!((nMsk ^ 32) & 1824) ?
@@ -82,8 +86,6 @@ var JSEntities = {
 							:
 								(nMsk & 225) | 32
 						)
-					: nChr === 92 ?							/* `\` */
-						(nMsk & 4035) ^ 2
 					: nChr === 42 ?							/* `*` */
 						(
 							nMsk & 256 ?
@@ -95,8 +97,6 @@ var JSEntities = {
 							:
 								nMsk & 1985
 						)
-					: (nChr === 10 || nChr === 13) && (nMsk & 512) ?		/* `\n` or `\r` */
-						nMsk & 193
 					: nMsk & 32 ?
 						(nMsk & 3265) | 3072
 					: nMsk & 1024 ?
@@ -113,9 +113,9 @@ var JSEntities = {
 
 				}
 
-				nCBrackets++;
+				nCurlies++;
 
-			} else if ((nMsk & 16) && --nCBrackets === 0) {
+			} else if ((nMsk & 16) && --nCurlies === 0) {
 
 				/* nOffsetC = nIdx; */
 
