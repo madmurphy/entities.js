@@ -4,7 +4,7 @@
 
 For example,
 
-```html
+```
 <script type="text/javascript">
 	var myCSS = "color: red;";
 </script>
@@ -18,7 +18,7 @@ was evaluated as
 <p style="color: red;">Hi!</p>
 ```
 
-This framework allows to use again Netscape's feature together with modern HTML5. All you need to do is to include `entities_min.js` in your document, then let it parse the page:
+This framework allows to use again Netscape's feature together with modern HTML5. All you need to do is to include `entities.js` in your document, then let it parse the page:
 
 ```html
 <script type="text/javascript" src="entities-min.js"></script>
