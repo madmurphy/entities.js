@@ -28,41 +28,44 @@ var JSEntities = {
 
 	/**
 
-		@brief			Parses and evaluates all the JavaScript entities nested in a string
-		@param			sInput		The string to parse and evaluate
-		@return			The evaluated string
+	@brief		Parses and evaluates all the JavaScript entities nested within a string
+	@param		sInput		The string to parse and evaluate
+	@return		The evaluated string
 
 	**/
 	"parseString": function (sInput) {
 
 		var
-			nChr, nOffsetA = 0, nOffsetB = 0, nCurlies = 0, nLen = sInput.length, sOutput = "";
+			nChr, nIdxA = 0, nIdxB = 0, nCurlies = 0, nLen = sInput.length, aParts = [];
 
 		/*
 
-		Mask `nMsk` (12 bits used):
+			Mask `nMsk` (12 bits used):
 
-			FLAG_1		We are outside of any JavaScript entity
+			FLAG_1		We are *not* inside a JavaScript entity
 			FLAG_2		We are in an odd sequence of backslashes
-			FLAG_4		Unescaped ampersand found outside of any JavaScript entity
-			FLAG_8		Left curly bracket out of quote found inside a JavaScript entity
-			FLAG_16		Right curly bracket out of quote found inside a JavaScript entity
-			FLAG_32		This is a leading slash
-			FLAG_64		We are inside a single-quoted string expression
-			FLAG_128	We are inside a double-quoted string expression
+			FLAG_4		Unescaped ampersand found AND `FLAG_1 === true`
+			FLAG_8		Left curly bracket found inside or at the
+					beginning of a JavaScript entity
+			FLAG_16		Right curly bracket out of quote found inside or
+					at the end of a JavaScript entity
+			FLAG_32		Leading slash found
+			FLAG_64		We are inside a single-quote string expression
+			FLAG_128	We are inside a double-quote string expression
 			FLAG_256	We are inside a multiline comment
 			FLAG_512	We are inside an inline comment
 			FLAG_1024	We are inside a regular expression
-			FLAG_2048	Next slash will close a slash expression (either a regular expression or a multiline comment)
+			FLAG_2048	Next slash will close a slash expression (either
+					a regular expression or a multiline comment)
 
 		*/
 
-		for (var nMsk = 1, nIdx = 0; nIdx < nLen; nIdx++) {
+		for (var nMsk = 1, nIdxC = 0; nIdxC < nLen; nIdxC++) {
 
-			nChr = sInput.charCodeAt(nIdx);
+			nChr = sInput.charCodeAt(nIdxC);
 
-			nMsk	=	nChr === 38 && !((nMsk ^ 1) & 1987) ?				/* `&` */
-						(nMsk & 4039) | 4
+			nMsk	=	nChr === 38 && !((nMsk ^ 1) & 1985) ?				/* `&` */
+						(nMsk & 4037) | 4
 					: nChr === 123 && ((nMsk ^ 1) & 5) && !(nMsk & 1986) ?		/* `{` */
 						(nMsk & 4035) | 8
 					: nChr === 125 && !(nMsk & 1987) ?				/* `}` */
@@ -108,7 +111,7 @@ var JSEntities = {
 
 				if (nMsk & 1) {
 
-					nOffsetB = nIdx;
+					nIdxB = nIdxC;
 					nMsk &= 4094;
 
 				}
@@ -117,25 +120,23 @@ var JSEntities = {
 
 			} else if ((nMsk & 16) && --nCurlies === 0) {
 
-				/* nOffsetC = nIdx; */
+				if (nIdxC + 1 < nLen && sInput.charCodeAt(nIdxC + 1) === 59 /* `;` */) {
 
-				if (nIdx + 1 < nLen && sInput.charCodeAt(nIdx + 1) === 59 /* `;` */) {
-
-					sOutput += sInput.substring(nOffsetA, nOffsetB - 1);
+					aParts.push(sInput.substring(nIdxA, nIdxB - 1));
 
 					try {
 
-						sOutput += window.eval(sInput.substring(nOffsetB + 1, nIdx));
+						aParts.push(window.eval(sInput.substring(nIdxB + 1, nIdxC)));
 
 					} catch (oErr) {
 
 						console.log("JSEntities, parsing error - " + oErr.message + " [skip]");
-						sOutput += sInput.substring(nOffsetB - 1, nIdx + 2);
+						aParts.push(sInput.substring(nIdxB - 1, nIdxC + 2));
 
 					}
 
-					nOffsetA = nIdx + 2;
-					nIdx++;
+					nIdxA = nIdxC + 2;
+					nIdxC++;
 
 				}
 
@@ -145,21 +146,21 @@ var JSEntities = {
 
 		}
 
-		if (nOffsetA < nLen) {
+		if (nIdxA < nLen) {
 
-			sOutput += sInput.slice(nOffsetA);
+			aParts.push(sInput.slice(nIdxA));
 
 		}
 
-		return sOutput;
+		return aParts.join("");
 
 	},
 
 	/**
 
-		@brief			Parses all the attributes contained in a DOM tree
-		@param			oParent		The DOM tree to parse
-		@return			Nothing
+	@brief		Parses all the attributes contained in a DOM tree
+	@param		oParent		The DOM tree to parse
+	@return		Nothing
 
 	**/
 	"parseTree": function (oParent) {
