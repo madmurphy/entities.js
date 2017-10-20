@@ -35,8 +35,7 @@ var JSEntities = {
 	**/
 	"parseString": function (sInput) {
 
-		var
-			nChr, nIdxA = 0, nIdxB = 0, nCurlies = 0, nLen = sInput.length, aParts = [];
+		var nIdxA = 0, nLen = sInput.length, aParts = [];
 
 		/*
 
@@ -60,7 +59,7 @@ var JSEntities = {
 
 		*/
 
-		for (var nAbc = 1, nIdxC = 0; nIdxC < nLen; nIdxC++) {
+		for (var /* let */ nChr, nIdxB = 0, nIdxC = 0, nCurlies = 0, nAbc = 1; nIdxC < nLen; nIdxC++) {
 
 			nChr = sInput.charCodeAt(nIdxC);
 
@@ -165,11 +164,11 @@ var JSEntities = {
 	**/
 	"parseTree": function (oParent) {
 
-		var nIdx, oIter;
+		var oIter;
 
 		if (oParent.hasAttributes && oParent.hasAttributes()) {
 
-			for (nIdx = 0; nIdx < oParent.attributes.length; nIdx++) {
+			for (var /* let */ nIdx = 0; nIdx < oParent.attributes.length; nIdx++) {
 
 				oIter = oParent.attributes[nIdx];
 				oIter.value = this.parseString(oIter.value);
