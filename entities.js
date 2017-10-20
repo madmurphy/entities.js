@@ -40,11 +40,11 @@ var JSEntities = {
 
 		/*
 
-			Mask `nMsk` (12 bits used):
+			Mask `nAbc` (12 bits used):
 
 			FLAG_1		We are *not* inside a JavaScript entity
 			FLAG_2		We are in an odd sequence of backslashes
-			FLAG_4		Unescaped ampersand found AND `FLAG_1 === true`
+			FLAG_4		Ampersand found AND `FLAG_1 === true`
 			FLAG_8		Left curly bracket found inside or at the
 					beginning of a JavaScript entity
 			FLAG_16		Right curly bracket out of quote found inside or
@@ -60,65 +60,65 @@ var JSEntities = {
 
 		*/
 
-		for (var nMsk = 1, nIdxC = 0; nIdxC < nLen; nIdxC++) {
+		for (var nAbc = 1, nIdxC = 0; nIdxC < nLen; nIdxC++) {
 
 			nChr = sInput.charCodeAt(nIdxC);
 
-			nMsk	=	nChr === 38 && !((nMsk ^ 1) & 1985) ?				/* `&` */
-						(nMsk & 4037) | 4
-					: nChr === 123 && ((nMsk ^ 1) & 5) && !(nMsk & 1986) ?		/* `{` */
-						(nMsk & 4035) | 8
-					: nChr === 125 && !(nMsk & 1987) ?				/* `}` */
-						(nMsk & 4051) | 16
-					: nChr === 39 && !(nMsk & 1955) ?				/* `'` */
-						(nMsk & 4035) ^ 64
-					: nChr === 34 && !(nMsk & 1891) ?				/* `"` */
-						(nMsk & 4035) ^ 128
-					: (nChr === 10 || nChr === 13) && (nMsk & 512) ?		/* `\n` or `\r` */
-						nMsk & 193
+			nAbc	=	nChr === 38 && !((nAbc ^ 1) & 1985) ?				/* `&` */
+						(nAbc & 4037) | 4
+					: nChr === 123 && ((nAbc ^ 1) & 5) && !(nAbc & 1986) ?		/* `{` */
+						(nAbc & 4035) | 8
+					: nChr === 125 && !(nAbc & 1987) ?				/* `}` */
+						(nAbc & 4051) | 16
+					: nChr === 39 && !(nAbc & 1955) ?				/* `'` */
+						(nAbc & 4035) ^ 64
+					: nChr === 34 && !(nAbc & 1891) ?				/* `"` */
+						(nAbc & 4035) ^ 128
+					: (nChr === 10 || nChr === 13) && (nAbc & 512) ?		/* `\n` or `\r` */
+						nAbc & 193
 					: nChr === 92 ?							/* `\` */
-						(nMsk & 4035) ^ 2
-					: nChr === 47 && !(nMsk & 193) ?				/* `/` */
+						(nAbc & 4035) ^ 2
+					: nChr === 47 && !(nAbc & 193) ?				/* `/` */
 						(
-							!((nMsk ^ 32) & 1824) ?
-								(nMsk & 705) | 512
-							: !((nMsk ^ 2048) & 2050) ?
-								(nMsk & 193) | (nMsk << 1 & 2048)
-							: nMsk & 1792 ?
-								nMsk & 4033
+							!((nAbc ^ 32) & 1824) ?
+								(nAbc & 705) | 512
+							: !((nAbc ^ 2048) & 2050) ?
+								(nAbc & 193) | (nAbc << 1 & 2048)
+							: nAbc & 1792 ?
+								nAbc & 4033
 							:
-								(nMsk & 225) | 32
+								(nAbc & 225) | 32
 						)
 					: nChr === 42 ?							/* `*` */
 						(
-							nMsk & 256 ?
-								(nMsk & 2529) | 2048
-							: nMsk & 32 ?
-								(nMsk & 449) | 256
-							: nMsk & 1024 ?
-								nMsk & 4033
+							nAbc & 256 ?
+								(nAbc & 2529) | 2048
+							: nAbc & 32 ?
+								(nAbc & 449) | 256
+							: nAbc & 1024 ?
+								nAbc & 4033
 							:
-								nMsk & 1985
+								nAbc & 1985
 						)
-					: nMsk & 32 ?
-						(nMsk & 3265) | 3072
-					: nMsk & 1024 ?
-						nMsk & 4033
+					: nAbc & 32 ?
+						(nAbc & 3265) | 3072
+					: nAbc & 1024 ?
+						nAbc & 4033
 					:
-						nMsk & 1985;
+						nAbc & 1985;
 
-			if (nMsk & 8) {
+			if (nAbc & 8) {
 
-				if (nMsk & 1) {
+				if (nAbc & 1) {
 
 					nIdxB = nIdxC;
-					nMsk &= 4094;
+					nAbc &= 4094;
 
 				}
 
 				nCurlies++;
 
-			} else if ((nMsk & 16) && --nCurlies === 0) {
+			} else if ((nAbc & 16) && --nCurlies === 0) {
 
 				if (nIdxC + 1 < nLen && sInput.charCodeAt(nIdxC + 1) === 59 /* `;` */) {
 
@@ -140,7 +140,7 @@ var JSEntities = {
 
 				}
 
-				nMsk = 1;
+				nAbc = 1;
 
 			}
 
